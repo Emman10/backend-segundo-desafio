@@ -1,47 +1,65 @@
-class ProductManager{
-    constructor(){
-        this.products = []
-        this.index = []
+class ProductManager {
+    constructor() {
+      this.products = [];
     }
-
-    generateCode = (largo) =>{
-        let data = "zxcvbnmasdfghjklñqwertyuiop123456789"
-        data = data.split("")
-        let acumulador = []
-        for (let i = 0 ; i< largo ; i++ ){
-            let codigoAleatorio = Math.floor(Math.random()*(data.length))
-            acumulador.push(data[codigoAleatorio])
-        }
-        return acumulador.join("")
+  
+    getProducts() {
+      return this.products;
     }
-
-    getProducts = () =>{
-        return this.products
+  
+    addProduct(product) {
+      const id = Math.floor(Math.random() * 1000000) + 1; 
+      const newProduct = { ...product, id }; 
+      this.products.push(newProduct); 
+      return newProduct; 
     }
-
-    addProduct = (title, description, price, thumbnail, stock) => {
-        
-        this.index++
-        const id = this.index
-
-        const code = this.generateCode(6)
-
-        const product = {id, title, description, price, thumbnail, code, stock}
-
-        if (!id || !title || !description || !price || !thumbnail || !code || !stock) {
-            return console.log("\n* Faltan datos en " + product.title + " *\n")
-        }
-
-        //validar que no se repita title
-
-        this.products.push(product)
+  
+    getProductById(id) {
+      const product = this.products.find((p) => p.id === id); 
+      if (!product) {
+        throw new Error("No se encontró el producto");
+      }
+      return product;
     }
-}
+  
+    updateProduct(id, update) {
+      const productIndex = this.products.findIndex((p) => p.id === id); 
+      if (productIndex === -1) {
+        throw new Error("No se encontró el producto");
+      }
+      const updatedProduct = { ...this.products[productIndex], ...update }; 
+      this.products[productIndex] = updatedProduct; 
+      return updatedProduct; 
+    }
+  
+    deleteProduct(id) {
+      const productIndex = this.products.findIndex((p) => p.id === id); 
+      if (productIndex === -1) {
+        throw new Error("No se encontró el producto");
+      }
+      const deletedProduct = this.products[productIndex]; 
+      this.products.splice(productIndex, 1); 
+      return deletedProduct; 
+    }
+  }
+  
+  const productManager = new ProductManager();
+  
+  console.log(productManager.getProducts()); // []
 
-const manager = new ProductManager()
-manager.addProduct("Alfajor", "Dulce de leche", 200, "img", 50)
-manager.addProduct("Factura", "Medialuna", 100, "img", 30)
-manager.addProduct("Brownie", "Chocolate con nuez", 150, "img", 40)
-
-manager.getProducts()
-console.log(manager.products)
+  const newProduct = productManager.addProduct({
+    title: "Alfajor de Dulce de Leche",
+    description: "Bañado en chocolate con dulce de leche",
+    price: 200,
+    thumbnail: "Sin imagen",
+    code: "abc123",
+    stock: 25,
+  });
+  
+  
+  console.log(newProduct); 
+  
+  console.log(productManager.getProducts()); 
+  
+  console.log(productManager.getProductById(newProduct.id)); 
+  
